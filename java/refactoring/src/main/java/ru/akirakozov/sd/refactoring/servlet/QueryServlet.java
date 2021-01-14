@@ -1,5 +1,6 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
+import ru.akirakozov.sd.refactoring.HTMLBuilder;
 import ru.akirakozov.sd.refactoring.Product;
 import ru.akirakozov.sd.refactoring.ProductDB;
 
@@ -18,33 +19,30 @@ public class QueryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String command = request.getParameter("command");
+        HTMLBuilder page = new HTMLBuilder(response.getWriter());
         try {
             if ("max".equals(command)) {
                 List<Product> list = db.getMax();
-                response.getWriter().println("<html><body>");
-                response.getWriter().println("<h1>Product with max price: </h1>");
+                page.addHeader("Product with max price: ");
                 for (Product product : list) {
-                    response.getWriter().println(product.getName() + "\t" + product.getPrice() + "</br>");
+                    page.addProduct(product);
                 }
-                response.getWriter().println("</body></html>");
+                page.addEnding();
             } else if ("min".equals(command)) {
                 List<Product> list = db.getMin();
-                response.getWriter().println("<html><body>");
-                response.getWriter().println("<h1>Product with min price: </h1>");
+                page.addHeader("Product with min price: ");
                 for (Product product : list) {
-                    response.getWriter().println(product.getName() + "\t" + product.getPrice() + "</br>");
+                    page.addProduct(product);
                 }
-                response.getWriter().println("</body></html>");
+                page.addEnding();
             } else if ("sum".equals(command)) {
-                response.getWriter().println("<html><body>");
-                response.getWriter().println("Summary price: ");
-                response.getWriter().println(db.getSum());
-                response.getWriter().println("</body></html>");
+                page.addLine("Summary price: ");
+                page.addLine(Long.toString(db.getSum()));
+                page.addEnding();
             } else if ("count".equals(command)) {
-                response.getWriter().println("<html><body>");
-                response.getWriter().println("Number of products: ");
-                response.getWriter().println(db.getCount());
-                response.getWriter().println("</body></html>");
+                page.addLine("Number of products: ");
+                page.addLine(Long.toString(db.getCount()));
+                page.addEnding();
             } else {
                 response.getWriter().println("Unknown command: " + command);
             }

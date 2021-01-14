@@ -1,5 +1,6 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
+import ru.akirakozov.sd.refactoring.HTMLBuilder;
 import ru.akirakozov.sd.refactoring.Product;
 import ru.akirakozov.sd.refactoring.ProductDB;
 
@@ -17,13 +18,13 @@ public class GetProductsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HTMLBuilder page = new HTMLBuilder(response.getWriter());
         try {
             List<Product> list = db.getAll();
-            response.getWriter().println("<html><body>");
             for (Product product: list) {
-                response.getWriter().println(product.getName() + "\t" + product.getPrice() + "</br>");
+                page.addProduct(product);
             }
-            response.getWriter().println("</body></html>");
+            page.addEnding();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
