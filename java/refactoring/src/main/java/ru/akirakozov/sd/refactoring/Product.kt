@@ -3,16 +3,29 @@ package ru.akirakozov.sd.refactoring
 import java.sql.DriverManager
 import java.sql.ResultSet
 
-class Product(val name: String, val price: Int) {
+class Product(val name: String, val price: Long) {
     override fun toString(): String {
         return "name: $name; price: $price";
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Product) {
+            return false
+        }
+        return name == other.name && price == other.price
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = (31 * result + price).toInt()
+        return result
     }
 }
 
 class ProductDB {
     private fun buildProduct(rs: ResultSet): Product {
         val name = rs.getString("name")
-        val price = rs.getInt("price")
+        val price = rs.getLong("price")
         return Product(name, price)
     }
 
